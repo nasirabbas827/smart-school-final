@@ -15,37 +15,84 @@
       font-family: Arial, sans-serif;
       background-color: #e6effc;
       margin-left: 280px;
+      overflow-x: hidden;
     }
 
+    /* Fixed Sidebar for desktop */
     nav.sidebar {
       width: 280px;
       height: 100vh;
       position: fixed;
       top: 0;
       left: 0;
-      background-color: #212529;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
       color: white;
-      padding: 1rem;
+      padding: 0;
       z-index: 1000;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: #34495e #1a1a2e;
+    }
+
+    /* Custom scrollbar for Webkit browsers */
+    nav.sidebar::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    nav.sidebar::-webkit-scrollbar-track {
+      background: #1a1a2e;
+      border-radius: 10px;
+    }
+
+    nav.sidebar::-webkit-scrollbar-thumb {
+      background: #34495e;
+      border-radius: 10px;
+    }
+
+    nav.sidebar::-webkit-scrollbar-thumb:hover {
+      background: #4a69bd;
     }
 
     .nav-link {
       font-size: clamp(0.9rem, 2.5vw, 1rem);
-      transition: background-color 0.3s;
+      transition: all 0.3s ease;
+      border-radius: 8px;
+      margin: 0.125rem 0.75rem;
+      padding: 0.75rem 1rem;
+      color: #ecf0f1 !important;
+      border-left: 3px solid transparent;
     }
 
     .nav-link:hover {
-      background-color: #007bff;
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+      transform: translateX(3px);
+      border-left-color: #e74c3c;
+      box-shadow: 0 4px 8px rgba(231, 76, 60, 0.3);
+      color: white !important;
     }
 
+    .nav-link.active {
+      background: linear-gradient(90deg, #f39c12, #e67e22);
+      border-left-color: #f39c12;
+      box-shadow: 0 4px 12px rgba(243, 156, 18, 0.4);
+      color: white !important;
+    }
+
+    /* Mobile hamburger button */
     .toggle-btn {
       display: none;
       position: fixed;
       top: 1rem;
       left: 1rem;
       z-index: 1100;
+      border: none;
+      border-radius: 8px;
+      padding: 0.75rem;
+      background: linear-gradient(45deg, #e74c3c, #c0392b);
+      box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
     }
 
+    /* Hide fixed sidebar on mobile */
     @media (max-width: 992px) {
       body {
         margin-left: 0 !important;
@@ -64,139 +111,344 @@
       }
     }
 
+    /* Style offcanvas sidebar */
     .offcanvas {
-      width: 280px;
+      width: 280px !important;
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
     }
 
     .offcanvas .nav-link {
-      color: white;
+      color: #ecf0f1 !important;
+      margin-bottom: 0.5rem;
+      border-left: 3px solid transparent;
     }
 
     .offcanvas .nav-link:hover {
-      background-color: #007bff;
+      background: linear-gradient(90deg, #e74c3c, #c0392b) !important;
+      border-left-color: #e74c3c;
+      transform: translateX(3px);
+    }
+
+    .offcanvas-header {
+      background: linear-gradient(90deg, #e74c3c, #c0392b);
+      color: white;
+    }
+
+    /* Brand styling */
+    .sidebar-brand {
+      font-weight: bold;
+      font-size: 1.25rem;
+      background: linear-gradient(45deg, #f39c12, #e67e22);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 1.5rem 0;
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: center;
+      border-bottom: 2px solid rgba(243, 156, 18, 0.3);
+    }
+
+    /* Divider */
+    .sidebar-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #34495e, transparent);
+      margin: 1rem 0;
+    }
+
+    /* Section headers */
+    .section-header {
+      font-size: 0.85rem;
+      font-weight: bold;
+      color: #bdc3c7;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0.5rem 1rem;
+      margin-top: 1rem;
+      margin-bottom: 0.5rem;
     }
 
     @media (max-width: 576px) {
       .nav-link {
         font-size: 0.875rem;
+        padding: 0.625rem 0.875rem;
       }
 
       .offcanvas-title {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
       }
+
+      .sidebar-brand {
+        font-size: 1.1rem;
+      }
+    }
+
+    /* Active indicator */
+    .nav-link i {
+      width: 20px;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    .nav-link:hover i {
+      transform: scale(1.1);
     }
   </style>
 </head>
 <body>
 
-<!-- 🔘 Hamburger Button (Mobile Only) -->
-<button class="btn btn-primary toggle-btn" type="button"
+<!-- 🔘 Enhanced Hamburger Button (mobile only) -->
+<button class="btn toggle-btn shadow-lg" type="button"
         data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"
         aria-controls="sidebarOffcanvas">
-  <i class="fas fa-bars"></i>
+  <i class="fas fa-bars fs-5"></i>
 </button>
 
-<!-- 🧱 Fixed Sidebar (Desktop Only) -->
+<!-- 🧱 Enhanced Fixed Sidebar (desktop only) -->
 <nav class="sidebar d-flex flex-column flex-shrink-0">
-  <a href="admin_home.php" class="d-flex align-items-center mb-3 text-white text-decoration-none">
+  <!-- Brand -->
+  <div class="sidebar-brand d-flex align-items-center justify-content-center mb-0">
     <i class="fas fa-user-shield me-2"></i>
-    <span class="fs-4">Admin Dashboard</span>
-  </a>
-  <hr>
-  <ul class="nav nav-pills flex-column mb-auto">
-    <li class="nav-item">
-      <a class="nav-link text-white" href="admin_home.php">
-        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_classes.php">
-        <i class="fas fa-chalkboard me-2"></i> Classes
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_users.php">
-        <i class="fas fa-user-graduate me-2"></i> Users
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_subjects.php">
-        <i class="fas fa-book me-2"></i> Subjects
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_schedules.php">
-        <i class="fas fa-calendar-alt me-2"></i> Schedule
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="announcements.php">
-        <i class="fas fa-bullhorn me-2"></i> Announcements
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="attendance.php">
-        <i class="fas fa-bullhorn me-2"></i> Attendance
-      </a>
-    </li>
-  </ul>
-  <hr>
-  <a class="nav-link text-white" href="logout.php">
-    <i class="fas fa-sign-out-alt me-2"></i> Logout
-  </a>
-</nav>
-
-<!-- 📱 Offcanvas Sidebar (Mobile Only) -->
-<div class="offcanvas offcanvas-start bg-dark text-white" tabindex="-1"
-     id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
-      <i class="fas fa-user-shield me-2"></i>Admin Dashboard
-    </h5>
-    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    <span>Admin Portal</span>
   </div>
-  <div class="offcanvas-body">
-    <ul class="nav nav-pills flex-column mb-auto">
+  
+  <div class="p-3">
+    <hr class="sidebar-divider">
+    
+    <!-- Main Navigation -->
+    <ul class="nav nav-pills flex-column mb-3">
       <li class="nav-item">
-      <a class="nav-link text-white" href="admin_home.php">
-        <i class="fas fa-tachometer-alt me-2"></i> Dashboard
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_classes.php">
-        <i class="fas fa-chalkboard me-2"></i> Classes
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_users.php">
-        <i class="fas fa-user-graduate me-2"></i> Users
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_subjects.php">
-        <i class="fas fa-book me-2"></i> Subjects
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="manage_schedules.php">
-        <i class="fas fa-calendar-alt me-2"></i> Schedule
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link text-white" href="announcements.php">
-        <i class="fas fa-bullhorn me-2"></i> Announcements
-      </a>
-    </li>
-      <li class="nav-item">
-        <a class="nav-link text-white" href="logout.php">
-          <i class="fas fa-sign-out-alt me-2"></i> Logout
+        <a class="nav-link active" href="admin_home.php" aria-current="page">
+          <i class="fas fa-tachometer-alt me-2"></i> Dashboard
         </a>
       </li>
     </ul>
+
+    <!-- 🏫 School Management -->
+    <div class="section-header">
+      <i class="fas fa-school me-1 text-warning"></i>SCHOOL MANAGEMENT
+    </div>
+    <ul class="nav nav-pills flex-column mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="manage_classes.php">
+          <i class="fas fa-chalkboard me-2"></i> Manage Classes
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="manage_users.php">
+          <i class="fas fa-users me-2"></i> Manage Users
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="manage_subjects.php">
+          <i class="fas fa-book me-2"></i> Manage Subjects
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="manage_schedules.php">
+          <i class="fas fa-calendar-alt me-2"></i> Manage Schedules
+        </a>
+      </li>
+    </ul>
+
+    <!-- 📢 Communication -->
+    <div class="section-header">
+      <i class="fas fa-bullhorn me-1 text-info"></i>COMMUNICATION
+    </div>
+    <ul class="nav nav-pills flex-column mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="announcements.php">
+          <i class="fas fa-bullhorn me-2"></i> Announcements
+        </a>
+      </li>
+    </ul>
+
+    <!-- 📊 Reports & Analytics -->
+    <div class="section-header">
+      <i class="fas fa-chart-bar me-1 text-success"></i>REPORTS
+    </div>
+    <ul class="nav nav-pills flex-column mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="attendance.php">
+          <i class="fas fa-calendar-check me-2"></i> Attendance Report
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="admin_view_grades.php">
+          <i class="fas fa-chart-line me-2"></i> Performance Report
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="admin_feedback.php">
+          <i class="fas fa-comment-dots me-2"></i> Feedback History
+        </a>
+      </li>
+    </ul>
+
+    <!-- 💰 Financial & Services -->
+    <div class="section-header">
+      <i class="fas fa-dollar-sign me-1 text-primary"></i>FINANCE & SERVICES
+    </div>
+    <ul class="nav nav-pills flex-column mb-3">
+      <li class="nav-item">
+        <a class="nav-link" href="admin_fee_management.php">
+          <i class="fas fa-money-bill-wave me-2"></i> Fee Management
+        </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="add_transport.php">
+          <i class="fas fa-bus me-2"></i> Transport 
+        </a>
+      </li>
+    </ul>
+
+    <hr class="sidebar-divider">
+    
+    <!-- Logout -->
+    <div class="mt-auto">
+      <a class="nav-link" href="logout.php">
+        <i class="fas fa-sign-out-alt me-2"></i> Logout
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- 📱 Enhanced Offcanvas Sidebar (mobile only) - FULL MENU -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="sidebarOffcanvasLabel">
+      <i class="fas fa-user-shield me-2"></i> Admin Portal
+    </h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <!-- Main Navigation -->
+    <ul class="nav nav-pills flex-column mb-3 px-3 py-2">
+      <li class="nav-item">
+        <a class="nav-link active" href="admin_home.php">
+          <i class="fas fa-tachometer-alt me-2"></i> Dashboard
+        </a>
+      </li>
+    </ul>
+
+    <!-- School Management -->
+    <div class="px-3 pb-3">
+      <div class="section-header mb-2">
+        <i class="fas fa-school me-1 text-warning"></i>SCHOOL MANAGEMENT
+      </div>
+      <ul class="nav nav-pills flex-column mb-3">
+        <li class="nav-item">
+          <a class="nav-link" href="manage_classes.php">
+            <i class="fas fa-chalkboard me-2"></i> Manage Classes
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="manage_users.php">
+            <i class="fas fa-users me-2"></i> Manage Users
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="manage_subjects.php">
+            <i class="fas fa-book me-2"></i> Manage Subjects
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="manage_schedules.php">
+            <i class="fas fa-calendar-alt me-2"></i> Manage Schedules
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Communication -->
+    <div class="px-3 pb-3">
+      <div class="section-header mb-2">
+        <i class="fas fa-bullhorn me-1 text-info"></i>COMMUNICATION
+      </div>
+      <ul class="nav nav-pills flex-column mb-3">
+        <li class="nav-item">
+          <a class="nav-link" href="announcements.php">
+            <i class="fas fa-bullhorn me-2"></i> Announcements
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Reports -->
+    <div class="px-3 pb-3">
+      <div class="section-header mb-2">
+        <i class="fas fa-chart-bar me-1 text-success"></i>REPORTS
+      </div>
+      <ul class="nav nav-pills flex-column mb-3">
+        <li class="nav-item">
+          <a class="nav-link" href="attendance.php">
+            <i class="fas fa-calendar-check me-2"></i> Attendance Report
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="admin_view_grades.php">
+            <i class="fas fa-chart-line me-2"></i> Performance Report
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="admin_feedback.php">
+            <i class="fas fa-comment-dots me-2"></i> Feedback History
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Finance & Services -->
+    <div class="px-3 pb-3">
+      <div class="section-header mb-2">
+        <i class="fas fa-dollar-sign me-1 text-primary"></i>FINANCE & SERVICES
+      </div>
+      <ul class="nav nav-pills flex-column mb-3">
+        <li class="nav-item">
+          <a class="nav-link" href="admin_fee_management.php">
+            <i class="fas fa-money-bill-wave me-2"></i> Fee Management
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="add_transport.php">
+            <i class="fas fa-bus me-2"></i> Transport 
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Logout Section -->
+    <div class="px-3 pb-3 border-top">
+      <a class="nav-link" href="logout.php">
+        <i class="fas fa-sign-out-alt me-2"></i> Logout
+      </a>
+    </div>
   </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+// Add smooth scrolling for sidebar & active state management
+document.querySelectorAll('.nav-link').forEach(link => {
+  link.addEventListener('click', function(e) {
+    // Remove active class from all links
+    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+    // Add active class to clicked link
+    this.classList.add('active');
+  });
+});
+
+// Auto-close mobile sidebar after clicking a link
+document.querySelectorAll('.offcanvas .nav-link').forEach(link => {
+  link.addEventListener('click', function() {
+    const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('sidebarOffcanvas'));
+    if (offcanvas) {
+      offcanvas.hide();
+    }
+  });
+});
+</script>
 
 </body>
 </html>

@@ -10,34 +10,53 @@ include('../config.php');
 $teacher_id = $_SESSION["user_id"];
 $successMsg = $errorMsg = "";
 
-// Fetch classes
+// ✅ Fetch only the class assigned to the teacher
 $classes = [];
-$classQuery = "SELECT class_id, class_name FROM classes ORDER BY class_name ASC";
-$classResult = $conn->query($classQuery);
+$classQuery = "
+    SELECT c.class_id, c.class_name 
+    FROM classes c
+    JOIN users u ON u.class_id = c.class_id
+    WHERE u.user_id = ?
+";
+$stmt = $conn->prepare($classQuery);
+$stmt->bind_param("i", $teacher_id);
+$stmt->execute();
+$classResult = $stmt->get_result();
 if ($classResult && $classResult->num_rows > 0) {
     while ($row = $classResult->fetch_assoc()) {
         $classes[] = $row;
     }
 }
+$stmt->close();
 
-// Fetch subjects
+// ✅ Fetch only subjects that belong to the teacher’s class
 $subjects = [];
-$subjectQuery = "SELECT subject_id, subject_name FROM subjects ORDER BY subject_name ASC";
-$subjectResult = $conn->query($subjectQuery);
+$subjectQuery = "
+    SELECT s.subject_id, s.subject_name 
+    FROM subjects s
+    WHERE s.class_id = (
+        SELECT class_id FROM users WHERE user_id = ?
+    )
+";
+$stmt = $conn->prepare($subjectQuery);
+$stmt->bind_param("i", $teacher_id);
+$stmt->execute();
+$subjectResult = $stmt->get_result();
 if ($subjectResult && $subjectResult->num_rows > 0) {
     while ($row = $subjectResult->fetch_assoc()) {
         $subjects[] = $row;
     }
 }
+$stmt->close();
 
-// Handle form submission
+// ✅ Handle form submission
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $class_id = $_POST["class_id"] ?? "";
     $subject_id = $_POST["subject_id"] ?? "";
     $details = $_POST["details"] ?? "";
     $upload_file = "";
 
-    // Handle file upload
+    // File upload
     if (isset($_FILES["upload_file"]) && $_FILES["upload_file"]["error"] == 0) {
         $allowed_ext = ["pdf", "doc", "docx"];
         $file_ext = strtolower(pathinfo($_FILES["upload_file"]["name"], PATHINFO_EXTENSION));

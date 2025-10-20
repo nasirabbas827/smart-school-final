@@ -8,7 +8,6 @@ if (!isset($_SESSION["usertype"]) || $_SESSION["usertype"] !== "admin") {
     exit;
 }
 
-
 $successMsg = $errorMsg = "";
 
 // Filters
@@ -88,6 +87,7 @@ $stmt->close();
     <div class="container mt-5">
         <h2 class="mb-4 text-center"><i class="fas fa-eye me-2"></i>View Attendance (All Classes)</h2>
 
+        <!-- Filter Form -->
         <form method="GET" action="" class="row g-3 mb-4">
             <div class="col-md-3">
                 <label for="date" class="form-label">Filter by Date</label>
@@ -120,8 +120,14 @@ $stmt->close();
             </div>
         </form>
 
+        <!-- Generate CSV Button -->
+        <div class="d-flex justify-content-end mb-3">
+            <button id="generateCsvBtn" class="btn btn-success"><i class="fas fa-file-csv me-1"></i>Generate CSV Report</button>
+        </div>
+
+        <!-- Attendance Table -->
         <div class="table-responsive">
-            <table class="table table-bordered table-striped align-middle">
+            <table id="attendanceTable" class="table table-bordered table-striped align-middle">
                 <thead class="table-dark">
                     <tr>
                         <th>Student</th>
@@ -148,12 +154,38 @@ $stmt->close();
                 </tbody>
             </table>
         </div>
-
-       
     </div>
 
+    <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/js/all.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // CSV generation
+        document.getElementById('generateCsvBtn').addEventListener('click', function() {
+            let table = document.getElementById('attendanceTable');
+            let rows = table.querySelectorAll('tr');
+            let csv = [];
+
+            rows.forEach(row => {
+                let cols = row.querySelectorAll('th, td');
+                let rowData = [];
+                cols.forEach(col => {
+                    let data = col.innerText.replace(/"/g, '""');
+                    rowData.push('"' + data + '"');
+                });
+                csv.push(rowData.join(','));
+            });
+
+            let csvFile = new Blob([csv.join('\n')], { type: "text/csv" });
+            let downloadLink = document.createElement("a");
+            downloadLink.download = "attendance_report.csv";
+            downloadLink.href = window.URL.createObjectURL(csvFile);
+            downloadLink.style.display = "none";
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        });
+    </script>
 </body>
 </html>
 
